@@ -117,7 +117,7 @@ export function ConversionOptionsPanel({ value, onChange, disabled }: Conversion
       <div>
         <label className="form-label">Video Codec</label>
         <div className="grid grid-cols-3 gap-2 mt-1">
-          {ALLOWED_VIDEO_CODECS.map(codec => {
+          {ALLOWED_VIDEO_CODECS.map((codec: VideoCodec) => {
             const info = VIDEO_CODEC_LABELS[codec];
             const active = value.videoCodec === codec;
             return (
@@ -164,7 +164,7 @@ export function ConversionOptionsPanel({ value, onChange, disabled }: Conversion
         value={value.outputFormat}
         onChange={v => update({ outputFormat: v })}
         disabled={disabled}
-        options={ALLOWED_FORMATS.map(fmt => ({
+        options={ALLOWED_FORMATS.map((fmt: OutputFormat) => ({
           value: fmt,
           label: FORMAT_LABELS[fmt],
           disabled: !CODEC_FORMAT_COMPAT[value.videoCodec].includes(fmt),
@@ -178,7 +178,7 @@ export function ConversionOptionsPanel({ value, onChange, disabled }: Conversion
         value={value.audioCodec}
         onChange={v => update({ audioCodec: v })}
         disabled={disabled}
-        options={ALLOWED_AUDIO_CODECS.map(c => ({ value: c, label: AUDIO_CODEC_LABELS[c] }))}
+        options={ALLOWED_AUDIO_CODECS.map((c: AudioCodec) => ({ value: c, label: AUDIO_CODEC_LABELS[c] }))}
       />
 
       {/* Resolution */}
@@ -188,7 +188,7 @@ export function ConversionOptionsPanel({ value, onChange, disabled }: Conversion
         value={value.resolution}
         onChange={v => update({ resolution: v })}
         disabled={disabled}
-        options={ALLOWED_RESOLUTIONS.map(r => ({ value: r, label: RESOLUTION_LABELS[r] }))}
+        options={ALLOWED_RESOLUTIONS.map((r: Resolution) => ({ value: r, label: RESOLUTION_LABELS[r] }))}
       />
 
       {/* Quality / CRF */}

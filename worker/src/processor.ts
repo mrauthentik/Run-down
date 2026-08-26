@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { updateJobStatus, updateJobProgress, getJobById } from '../db/jobs';
+import { updateJobStatus, updateJobProgress, getJobById } from './db/jobs';
 import { buildFfmpegArgs } from './ffmpeg/builder';
 import { getDuration, runFfmpeg } from './ffmpeg/runner';
 import { deleteInputFile, deleteOutputFile } from './cleanup';

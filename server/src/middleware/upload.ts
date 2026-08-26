@@ -42,8 +42,8 @@ export const upload = multer({
 // Uses file-type which reads magic bytes — not trusting the extension.
 export async function validateMimeType(filePath: string): Promise<void> {
   // file-type v16 is CJS compatible
-  const { fileTypeFromFile } = await import('file-type');
-  const result = await fileTypeFromFile(filePath);
+  const { fromFile } = await import('file-type');
+  const result = await fromFile(filePath);
 
   if (!result) {
     throw new Error('Could not determine file type — file may be corrupt or empty.');

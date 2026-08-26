@@ -5,11 +5,11 @@
     "lib": ["ES2022"],
     "types": ["node"],
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "composite": false,
     "paths": {
       "@run-down/shared": ["../shared/src/index.ts"]
     }

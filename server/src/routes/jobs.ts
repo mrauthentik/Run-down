@@ -11,7 +11,7 @@ export const jobsRouter = Router();
 
 jobsRouter.get(
   '/:id/status',
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
       const job = getJobById(req.params.id);
       if (!job) {
@@ -37,7 +37,7 @@ jobsRouter.get(
 
 jobsRouter.get(
   '/:id/download',
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
       const job = getJobById(req.params.id);
 
