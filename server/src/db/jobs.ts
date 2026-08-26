@@ -7,7 +7,17 @@ import type {
   JobStatusResponse,
 } from '@run-down/shared';
 
-const RETENTION_HOURS = parseInt(process.env.RETENTION_HOURS || '1', 10);
+const RETENTION_HOURS = parseInt(process.env.RETENTION_HOURS ?? '1', 10);
+
+// ─── Type helpers ─────────────────────────────────────────────────────────────
+// node:sqlite returns rows as Record<string, SqlValue>. We cast to our typed rows.
+function toRow(raw: unknown): JobRow {
+  return raw as JobRow;
+}
+
+function toRows(raw: unknown[]): JobRow[] {
+  return raw as JobRow[];
+}
 
 // ─── Create ──────────────────────────────────────────────────────────────────
 
@@ -21,12 +31,10 @@ export function createJob(
     Date.now() + RETENTION_HOURS * 60 * 60 * 1000,
   ).toISOString();
 
-  const stmt = db.prepare(`
+  db.prepare(`
     INSERT INTO jobs (id, original_filename, options_json, expires_at)
     VALUES (?, ?, ?, ?)
-  `);
-
-  stmt.run(id, originalFilename, JSON.stringify(options), expiresAt);
+  `).run(id, originalFilename, JSON.stringify(options), expiresAt);
 
   return getJobById(id)!;
 }
@@ -34,31 +42,28 @@ export function createJob(
 // ─── Read ────────────────────────────────────────────────────────────────────
 
 export function getJobById(id: string): JobRow | null {
-  const db = getDb();
-  return db
+  const raw = getDb()
     .prepare('SELECT * FROM jobs WHERE id = ?')
-    .get(id) as JobRow | null;
+    .get(id);
+  return raw ? toRow(raw) : null;
 }
 
 export function getExpiredJobs(): JobRow[] {
-  const db = getDb();
-  return db
-    .prepare(
-      `SELECT * FROM jobs WHERE expires_at < strftime('%Y-%m-%dT%H:%M:%SZ','now')`,
-    )
-    .all() as JobRow[];
+  return toRows(
+    getDb()
+      .prepare(`SELECT * FROM jobs WHERE expires_at < strftime('%Y-%m-%dT%H:%M:%SZ','now')`)
+      .all(),
+  );
 }
 
 export function getStalledJobs(): JobRow[] {
-  // Jobs stuck in 'processing' for more than 2x the ffmpeg timeout — mark as failed
-  const db = getDb();
-  const timeoutSec = parseInt(process.env.FFMPEG_TIMEOUT_SECONDS || '1800', 10);
+  const timeoutSec = parseInt(process.env.FFMPEG_TIMEOUT_SECONDS ?? '1800', 10);
   const cutoff = new Date(Date.now() - timeoutSec * 2 * 1000).toISOString();
-  return db
-    .prepare(
-      `SELECT * FROM jobs WHERE status = 'processing' AND created_at < ?`,
-    )
-    .all(cutoff) as JobRow[];
+  return toRows(
+    getDb()
+      .prepare(`SELECT * FROM jobs WHERE status = 'processing' AND created_at < ?`)
+      .all(cutoff),
+  );
 }
 
 // ─── Update ──────────────────────────────────────────────────────────────────
@@ -66,25 +71,35 @@ export function getStalledJobs(): JobRow[] {
 export function updateJobStatus(
   id: string,
   status: JobStatus,
-  extra: { progress?: number; outputPath?: string; outputSize?: number; error?: string } = {},
+  extra: {
+    progress?: number;
+    outputPath?: string;
+    outputSize?: number;
+    error?: string;
+  } = {},
 ): void {
-  const db = getDb();
   const { progress, outputPath, outputSize, error } = extra;
 
-  db.prepare(`
+  getDb().prepare(`
     UPDATE jobs
-    SET status = ?,
-        progress = COALESCE(?, progress),
+    SET status      = ?,
+        progress    = COALESCE(?, progress),
         output_path = COALESCE(?, output_path),
         output_size = COALESCE(?, output_size),
-        error = COALESCE(?, error)
+        error       = COALESCE(?, error)
     WHERE id = ?
-  `).run(status, progress ?? null, outputPath ?? null, outputSize ?? null, error ?? null, id);
+  `).run(
+    status,
+    progress ?? null,
+    outputPath ?? null,
+    outputSize ?? null,
+    error ?? null,
+    id,
+  );
 }
 
 export function updateJobProgress(id: string, progress: number): void {
-  const db = getDb();
-  db.prepare('UPDATE jobs SET progress = ? WHERE id = ?').run(progress, id);
+  getDb().prepare('UPDATE jobs SET progress = ? WHERE id = ?').run(progress, id);
 }
 
 // ─── Serialise for API response ──────────────────────────────────────────────

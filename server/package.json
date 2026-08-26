@@ -20,11 +20,9 @@
     "helmet": "^8.0.0",
     "ioredis": "^5.4.2",
     "multer": "^2.0.0",
-    "better-sqlite3": "^11.7.0",
     "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.12",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/multer": "^1.4.12",
