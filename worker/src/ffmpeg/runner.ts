@@ -1,9 +1,10 @@
 import { execFile } from 'child_process';
 import path from 'path';
 import ffmpegPath from 'ffmpeg-static';
+// @ts-ignore
 import ffprobeInstaller from '@ffprobe-installer/ffprobe';
 
-const ffprobePath = ffprobeInstaller.path;
+const ffprobePath = (ffprobeInstaller as any).path;
 
 const FFMPEG_TIMEOUT_MS =
   parseInt(process.env.FFMPEG_TIMEOUT_SECONDS ?? '1800', 10) * 1000;

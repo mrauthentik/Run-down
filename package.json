@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
+    "lightningcss-win32-x64-msvc": "^1.33.0",
     "vitest": "^2.1.8"
   }
 }
