@@ -4,8 +4,8 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node --esm-specifier-resolution=node src/index.ts",
-    "dev:watch": "nodemon --exec ts-node src/index.ts",
+    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
+    "dev:watch": "nodemon",
     "build": "tsc",
     "start": "node dist/index.js"
   },
@@ -19,7 +19,7 @@
     "file-type": "^16.5.4",
     "helmet": "^8.0.0",
     "ioredis": "^5.4.2",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^2.0.0",
     "better-sqlite3": "^11.7.0",
     "uuid": "^11.0.5"
   },
@@ -27,11 +27,12 @@
     "@types/better-sqlite3": "^7.6.12",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "@types/multer": "^1.4.12",
+    "@types/multer": "^2.0.0",
     "@types/node": "^22.10.2",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.2"
   }
 }
